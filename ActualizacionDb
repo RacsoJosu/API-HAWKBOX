@@ -1,0 +1,73 @@
+use hawk_box_db;
+
+
+
+/*
+SIRVE PARA SABER DONDE VIVE EL CLIENTE EN CASO QUE QUIERA QUE SE LE MANDE A LA CASA
+*/
+Create table UbicacionCliente (
+idUbicacionCliente integer Primary Key auto_increment not null,
+Departamento varchar (50),
+Ciudad varchar (50),
+Telefono varchar (25),
+Direccion varchar (100),
+idUsuario int not null,
+foreign key (idUsuario) references Usuarios(idUsuario)
+);
+
+
+# POR MEDIO DE ESTA TABLA TRANSITO, SE PODRA SABER EL ESTADO DEL PAQUETE SI FUE RECIBIDO, ENVIADO O ENTREGADO
+#ASI COMO POSIBLES ERRORES O PROBLEMAS CON SU ENTREGA, TAMBIEN SABER DE QUIEN ES EL PAQUETE Y PARA DONDE VA
+
+CREATE table Transitos (
+idTransito Integer Primary Key not null auto_increment,
+fechaEnvio  datetime DEFAULT NULL,
+fechaRecibido datetime DEFAULT NULL,
+fechaEntregado datetime DEFAULT NULL,
+Observaciones varchar (100) null,
+idPaquete integer not null,
+idUbicacion integer not null,
+idUsuario integer not null,
+Destinofinal integer null,
+foreign key (idPaquete) references Paquetes(idPaquete),
+foreign key (Ubicaciones) references Ubicaciones(idUbicacion),
+foreign key (idUsuario) references Usuarios(idUsuario),
+foreign key (Destinofinal) references UbicacionCliente(idUbicacionCliente)
+);
+
+#CASILLERO
+-- ESTA TABLA LO QUE HACE ES PARA QUE CADA CLIENTE AL MOMENTO DE PEDIR TENGA UN idCasillero Unico
+-- AUNQUE EL CASILLERO SEA SIEMPRE LA MISMA DIRECCION SERA 1 PARA CADA CLIENTE 
+-- EJEMPLO
+/*
+	IdCasillero: EM0405
+    PAIS: USA
+    ESTADO: FLORIDA
+    CIUDAD: MIAMI
+    TELEFONO: 12345670
+    IdUsario: 1
+    
+    * Quiere decir que ese casillero pertenece al usario 1, ejemplo Jesus
+	y se repite lo mismo 
+    
+    IdCasillero: EM0500
+    PAIS: USA
+    ESTADO: FLORIDA
+    CIUDAD: MIAMI
+    TELEFONO: 12345670
+    IdUsario: 2
+    
+    
+    El casillero se usa para fines de que ese espacio en el extranjero pertenece a un cliente en especifico
+*/ 
+
+CREATE TABLE Casillero (
+idCasillero Varchar (10) Primary Key not null unique,
+Pais Varchar (50) not null,
+Estado varchar (50) not null,
+Ciudad varchar (50) not null,
+Telefono varchar (50) not null,
+codigoPostal varchar(50) not null,
+idUsuario int not null,
+foreign key (idUsuario) references Usuarios(idUsuario)
+);
