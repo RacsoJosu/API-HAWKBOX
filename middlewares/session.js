@@ -17,8 +17,9 @@ const authMiddleware = async (req, res, next) => {
         if (!dataToken) {
             handleHttpError(res, "NOT_PAYLOAD_DATA", 401);
             return
-
         }
+
+        req.headers.idUser = dataToken.idUser
 
         next()
 
