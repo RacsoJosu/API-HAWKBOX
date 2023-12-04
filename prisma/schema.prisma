@@ -42,6 +42,7 @@ model paquetes {
   fechaEntregado DateTime?        @default(now()) @db.DateTime(0)
   createdAt      DateTime?        @default(now()) @db.DateTime(0)
   updatedAt      DateTime?        @default(now()) @db.DateTime(0)
+  imageUrl       String           @db.VarChar(255)
   idUsuario      Int
   paquetePadreId Int?
 
@@ -94,7 +95,7 @@ model usuarios {
   correo             String               @unique(map: "correo_unique") @db.VarChar(255)
   contrasenia        String?              @db.VarChar(255)
   tipo               usuarios_tipo?
-  numero_telefono    String?              @db.VarChar(100)
+  numeroTelefono    String?              @db.VarChar(100)
   pais               String?              @db.VarChar(255)
   ciudad             String               @db.VarChar(255)
   deviceid           String               @db.VarChar(255)
@@ -115,7 +116,7 @@ model notificaciones {
   idNotificacion Int             @id @default(autoincrement())
   titulo         String          @db.VarChar(255)
   descripcion    String          @db.Text
-  tipo_estado    paquetes_estado
+  tipoEstado    paquetes_estado
   idUsuario      Int
   idPaquete      Int
   usuario        usuarios        @relation(fields: [idUsuario], references: [idUsuario])
