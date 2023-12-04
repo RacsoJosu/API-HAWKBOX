@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model casilleros {
+  idCasillero  String   @id @unique(map: "idCasillero") @db.VarChar(10)
+  Pais         String   @db.VarChar(50)
+  Estado       String   @db.VarChar(50)
+  Ciudad       String   @db.VarChar(50)
+  Telefono     String   @db.VarChar(50)
+  codigoPostal String   @db.VarChar(50)
+  idUsuario    Int
+  createdAt    DateTime @db.DateTime(0)
+  updatedAt    DateTime @db.DateTime(0)
+  usuario      usuarios @relation(fields: [idUsuario], references: [idUsuario])
+
+  @@index([idUsuario], map: "idUsuario")
+}
+
+model cobros_envios {
+  idCobro   Int       @id @default(autoincrement())
+  peso      Float?    @db.Float
+  volumen   Float?    @db.Float
+  monto     Float?    @db.Float
+  createdAt DateTime? @db.DateTime(0)
+  updatedAt DateTime? @db.DateTime(0)
+}
+
+model paquetes {
+  idPaquete      Int              @id @default(autoincrement())
+  descripcion    String?          @db.VarChar(255)
+  peso           Float?           @db.Float
+  estado         paquetes_estado?
+  fechaEnvio     DateTime?        @default(now()) @db.DateTime(0)
+  fechaRecibido  DateTime?        @default(now()) @db.DateTime(0)
+  fechaEntregado DateTime?        @default(now()) @db.DateTime(0)
+  createdAt      DateTime?        @default(now()) @db.DateTime(0)
+  updatedAt      DateTime?        @default(now()) @db.DateTime(0)
+  idUsuario      Int
+  paquetePadreId Int?
+
+  usuario usuarios @relation(fields: [idUsuario], references: [idUsuario])
+
+  @@index([idUsuario], map: "idUsuario")
+  @@index([paquetePadreId], map: "paquetePadreId")
+}
+
+model transitos {
+  idTransito     Int       @id @default(autoincrement())
+  fechaEnvio     DateTime? @db.DateTime(0)
+  fechaRecibido  DateTime? @db.DateTime(0)
+  fechaEntregado DateTime? @db.DateTime(0)
+  Observaciones  String?   @db.VarChar(100)
+  createdAt      DateTime  @db.DateTime(0)
+  updatedAt      DateTime  @db.DateTime(0)
+}
+
+model ubicacion_clientes {
+  idUbicacionCliente Int      @id @default(autoincrement())
+  Departamento       String?  @db.VarChar(255)
+  Ciudad             String?  @db.VarChar(255)
+  Telefono           String?  @db.VarChar(255)
+  Direccion          String?  @db.VarChar(255)
+  idUsuario          Int
+  createdAt          DateTime @db.DateTime(0)
+  updatedAt          DateTime @db.DateTime(0)
+  usuario            usuarios @relation(fields: [idUsuario], references: [idUsuario])
+
+  @@index([idUsuario], map: "idUsuario")
+}
+
+model ubicaciones {
+  idUbicacion Int       @id @default(autoincrement())
+  latitud     Float?    @db.Float
+  longitud    Float?    @db.Float
+  fechaHora   DateTime? @db.DateTime(0)
+  idPaquete   Int?
+  createdAt   DateTime? @db.DateTime(0)
+  updatedAt   DateTime? @db.DateTime(0)
+
+  @@index([idPaquete], map: "idPaquete")
+}
+
+model usuarios {
+  idUsuario          Int                  @id @default(autoincrement())
+  nombre             String               @db.VarChar(255)
+  correo             String               @unique(map: "correo_unique") @db.VarChar(255)
+  contrasenia        String?              @db.VarChar(255)
+  tipo               usuarios_tipo?
+  numero_telefono    String?              @db.VarChar(100)
+  pais               String?              @db.VarChar(255)
+  ciudad             String               @db.VarChar(255)
+  createdAt          DateTime?            @db.DateTime(0)
+  updatedAt          DateTime?            @db.DateTime(0)
+  paquetes           paquetes[]
+  casilleros         casilleros[]
+  ubicacion_clientes ubicacion_clientes[]
+}
+
+enum paquetes_estado {
+  en_camino  @map("en camino")
+  en_espera  @map("en espera")
+  entregado
+  confirmado
+}
+
+enum usuarios_tipo {
+  admin
+  user
+}
