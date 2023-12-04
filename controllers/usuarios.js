@@ -21,9 +21,11 @@ const registerUser = async (req, res) => {
         nombre: body.name,
         correo: body.email,
         contrasenia: body.password_encrypt,
-        numero_telefono: body.phone,
+        numeroTelefono: body.phone,
         pais: body.country,
         ciudad: body.city,
+        deviceid: "-",
+        imagenUrl:"-"
       },
       select: {
         correo: true,
@@ -31,17 +33,24 @@ const registerUser = async (req, res) => {
         nombre: true,
       },
     });
+   
+    
 
     const data = {
-      token: await tokenSign(dataUser),
+      token: await tokenSign(user),
       user,
     };
     res.status(201);
     res.send({ data });
   } catch (e) {
-    
-    handleHttpError(res, "ERROR_REGISTER_USER", e);
-    
+    if (e.code === 'P2002') {
+      handleHttpError(res,"El correo ya existe")
+      
+    } else {
+      
+      handleHttpError(res, "ERROR_REGISTER_USER", e);
+      
+    }
   }
 };
 /**
@@ -62,7 +71,7 @@ const login = async (req, res) => {
         nombre: true,
         correo: true,
         tipo: true,
-        numero_telefono: true,
+        numeroTelefono: true,
         pais: true,
         contrasenia: true,
       },
@@ -73,8 +82,7 @@ const login = async (req, res) => {
       return;
     }
     const hashPassword = user.contrasenia;
-    console.log({ user });
-    console.log({ hashPassword, password: user.contrasenia });
+
     const check = await compare(body.password, hashPassword);
 
     if (!check) {
@@ -88,7 +96,7 @@ const login = async (req, res) => {
         idUsuario: user.idUsuario,
         nombre: user.nombre,
         correo: user.correo,
-        tipo: user.tipo,
+        tipo: "user",
         numero_telefono: user.numero_telefono,
         pais: user.pais,
       },
@@ -111,10 +119,11 @@ const createToken = async (req, res)=>{
     }
 
     const data = await prisma.usuarios.update({
-      where:{idUsuario, deviceid: pushToken}
+      where:{idUsuario},
+      data:{deviceid:pushToken}
     })
 
-    res.status(200).send({success: true, user: updateUser})
+    res.status(200).send({success: true, user: data})
 
     
   } catch (error) {

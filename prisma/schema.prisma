@@ -90,18 +90,19 @@ model ubicaciones {
 }
 
 model usuarios {
-  idUsuario          Int                  @id @default(autoincrement())
-  nombre             String               @db.VarChar(255)
-  correo             String               @unique(map: "correo_unique") @db.VarChar(255)
-  contrasenia        String?              @db.VarChar(255)
-  tipo               usuarios_tipo?
-  numeroTelefono    String?              @db.VarChar(100)
-  pais               String?              @db.VarChar(255)
-  ciudad             String               @db.VarChar(255)
-  deviceid           String               @db.VarChar(255)
-  imagenUrl          String               @db.VarChar(255)
-  createdAt          DateTime?            @db.DateTime(0)
-  updatedAt          DateTime?            @db.DateTime(0)
+  idUsuario      Int           @id @default(autoincrement())
+  nombre         String        @db.VarChar(255)
+  correo         String        @unique(map: "correo_unique") @db.VarChar(255)
+  contrasenia    String?       @db.VarChar(255)
+  tipo           usuarios_tipo?
+  numeroTelefono String?       @db.VarChar(100)
+  pais           String?       @db.VarChar(255)
+  ciudad         String        @db.VarChar(255)
+  deviceid       String        @db.VarChar(255)
+  imagenUrl      String        @db.VarChar(255)
+  createdAt      DateTime?     @db.DateTime(0)
+  updatedAt      DateTime?     @db.DateTime(0)
+
   paquetes           paquetes[]
   casilleros         casilleros[]
   ubicacion_clientes ubicacion_clientes[]
