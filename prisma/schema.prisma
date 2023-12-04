@@ -34,6 +34,7 @@ model cobros_envios {
 
 model paquetes {
   idPaquete      Int              @id @default(autoincrement())
+  trakingNumber  Int 
   descripcion    String?          @db.VarChar(255)
   peso           Float?           @db.Float
   estado         paquetes_estado?
@@ -79,8 +80,8 @@ model ubicacion_clientes {
 
 model ubicaciones {
   idUbicacion Int       @id @default(autoincrement())
-  latitud     Float?    @db.Float
-  longitud    Float?    @db.Float
+  Departamento String?  @db.VarChar(255)
+  Ciudad      String?  @db.VarChar(255)
   fechaHora   DateTime? @db.DateTime(0)
   idPaquete   Int?
   createdAt   DateTime? @db.DateTime(0)
