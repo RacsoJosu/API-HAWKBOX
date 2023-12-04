@@ -45,7 +45,8 @@ model paquetes {
   idUsuario      Int
   paquetePadreId Int?
 
-  usuario usuarios @relation(fields: [idUsuario], references: [idUsuario])
+  usuario        usuarios         @relation(fields: [idUsuario], references: [idUsuario])
+  notificaciones notificaciones[]
 
   @@index([idUsuario], map: "idUsuario")
   @@index([paquetePadreId], map: "paquetePadreId")
@@ -96,11 +97,32 @@ model usuarios {
   numero_telefono    String?              @db.VarChar(100)
   pais               String?              @db.VarChar(255)
   ciudad             String               @db.VarChar(255)
+  deviceid           String               @db.VarChar(255)
   createdAt          DateTime?            @db.DateTime(0)
   updatedAt          DateTime?            @db.DateTime(0)
   paquetes           paquetes[]
   casilleros         casilleros[]
   ubicacion_clientes ubicacion_clientes[]
+  notificaciones     notificaciones[]
+}
+
+model empresas_de_envios {
+  idEmpresa Int     @id @default(autoincrement())
+  nombre    String? @db.VarChar(100)
+}
+
+model notificaciones {
+  idNotificacion Int             @id @default(autoincrement())
+  titulo         String          @db.VarChar(255)
+  descripcion    String          @db.Text
+  tipo_estado    paquetes_estado
+  idUsuario      Int
+  idPaquete      Int
+  usuario        usuarios        @relation(fields: [idUsuario], references: [idUsuario])
+  paquete        paquetes        @relation(fields: [idPaquete], references: [idPaquete])
+
+  @@index([idUsuario], map: "idUsuario")
+  @@index([idPaquete], map: "idPaquete")
 }
 
 enum paquetes_estado {
