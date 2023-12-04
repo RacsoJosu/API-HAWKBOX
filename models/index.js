@@ -1,8 +1,13 @@
 const models =  {
     UsuarioModel: require('./usuario'),
     PaqueteModel: require('./paquetes'),
-    UbicacionModel: require('./ubicacion')
-
+    UbicacionModel: require('./ubicacion'),
+    //Nuevos Jesus 2/12/23
+    
+    UbicacionClienteModel: require('./ubicacionCliente'),
+    TransitoModel: require('./transito'),
+    Cobro_EnviosModel: require('./cobros_envios'),
+    CasilleroModel: require('./casillero')
 }
 
 models.UsuarioModel.Paquetes= models.UsuarioModel.hasMany(models.PaqueteModel,{
@@ -12,9 +17,6 @@ models.UsuarioModel.Paquetes= models.UsuarioModel.hasMany(models.PaqueteModel,{
 models.PaqueteModel.Usuario = models.PaqueteModel.belongsTo(models.UsuarioModel,{
     foreignKey:"idUsuario"
 })
-
-
-
 
 models.PaqueteModel.PaquetesHijos= models.PaqueteModel.hasMany(models.PaqueteModel,{
     foreignKey:"paquetePadreId"
@@ -39,6 +41,7 @@ models.UbicacionModel.Paquete= models.UbicacionModel.belongsTo(models.PaqueteMod
 
 
 
+// nuevos -Jesus   2/12/23
 
 
 module.exports = models

@@ -11,10 +11,6 @@ app.use("/api", require('./routes'));
 
 
 
-
-
-
-
 app.listen(port, ()=>{
     console.log({Server:"ON", Puerto:port})
 })
