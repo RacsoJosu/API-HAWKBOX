@@ -39,12 +39,9 @@ const registerUser = async (req, res) => {
     res.status(201);
     res.send({ data });
   } catch (e) {
-    if (e.errors[0].validatorKey == "not_unique") {
-      handleHttpError(res, "ERROR_EMAIL_EXISTS", 400);
-      return;
-    } else {
-      handleHttpError(res, "ERROR_REGISTER_USER");
-    }
+    
+    handleHttpError(res, "ERROR_REGISTER_USER");
+    
   }
 };
 /**
@@ -104,4 +101,27 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, login };
+const createToken = async (req, res)=>{
+  try {
+    const {idUsuario, pushToken} = req.body;
+
+    if (!idUsuario || !pushToken ) {
+      handleHttpError(res, "Se requiere del UsuarioId y un pushToken valido")
+      return
+    }
+
+    const data = await prisma.usuarios.update({
+      where:{idUsuario, deviceid: pushToken}
+    })
+
+    res.status(200).send({success: true, user: updateUser})
+
+    
+  } catch (error) {
+    console.log({error})
+    handleHttpError(res, "HTTP_ERROR_CREATE_TOKEN")
+  }
+}
+
+
+module.exports = { registerUser, login, createToken };

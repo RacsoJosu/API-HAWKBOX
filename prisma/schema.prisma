@@ -99,6 +99,7 @@ model usuarios {
   pais               String?              @db.VarChar(255)
   ciudad             String               @db.VarChar(255)
   deviceid           String               @db.VarChar(255)
+  imagenUrl          String               @db.VarChar(255)
   createdAt          DateTime?            @db.DateTime(0)
   updatedAt          DateTime?            @db.DateTime(0)
   paquetes           paquetes[]
@@ -116,7 +117,7 @@ model notificaciones {
   idNotificacion Int             @id @default(autoincrement())
   titulo         String          @db.VarChar(255)
   descripcion    String          @db.Text
-  tipoEstado    paquetes_estado
+  tipoEstado     paquetes_estado
   idUsuario      Int
   idPaquete      Int
   usuario        usuarios        @relation(fields: [idUsuario], references: [idUsuario])
