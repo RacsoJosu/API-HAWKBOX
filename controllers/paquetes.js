@@ -1,6 +1,7 @@
 const { prisma } = require('../config/database');
 const { findAllPackages } = require('../repository/paquetes');
 const { handleHttpError } = require('../utils/handleError');
+const { generateTrackinNumber } = require('../utils/handleTrackingNumber');
 
 
 const getPackages = async (req, res) => {
@@ -16,14 +17,20 @@ const getPackages = async (req, res) => {
 
 const createPackage = async (req, res) => {
     try {
-        const { body } = req
+        const { body, file } = req
+        const imageUrl = `http://localhost:3000/images/${file.filename}`
         const fechaEnvio = new Date()
+        const trackinNumber = generateTrackinNumber()
+
+        
         const package = await prisma.paquetes.create({
             data: {
                 peso: body.weight,
                 estado: body.state,
                 descripcion: body.description,
                 fechaEnvio,
+                trackinNumber,
+                imageUrl,
                 usuario: {
                     connect: {
                         idUsuario: req.headers.idUser

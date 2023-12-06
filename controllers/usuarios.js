@@ -1,8 +1,9 @@
 const { encrypt, compare } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
+const {expo} = require("../config/notificationes"); 
+const { getUserDeviceidById } = require("../repository/repository.usuarios");
 
-const { prisma } = require("../config/database");
 
 /**
  *
@@ -133,4 +134,45 @@ const createToken = async (req, res)=>{
 }
 
 
-module.exports = { registerUser, login, createToken };
+const sendNotification = async(req, res)=>{
+  try {
+    const idUsuario  = parseInt(req.params.idUsuario);
+    const message = req.params.message
+    if (!idUsuario || !message) {
+      handleHttpError(res, "NEED_ID_USUARIO_AND_MESSAGE", 400)
+      return
+    }
+
+    const user = await getUserDeviceidById(idUsuario);
+    const pushToken = user.deviceid
+
+    if (!pushToken) {
+        handleHttpError(res,"NOT_FOUND_TOKEN_USER",404)
+        return
+    }
+
+    const notification = {
+      to: pushToken,
+      sound: "default",
+      title:"notificacion",
+      body: message
+    }
+
+    let receipt = await expo.sendPushNotificationsAsync([notification])
+
+    if (receipt[0].status==="ok") {
+      res.json({success: true, receipt})
+      
+    }else{
+      res.status(500).json({error:"Error al enviar la notificación", receipt})
+    }
+
+
+    res.json({user})
+  } catch (error) {
+    console.log({error})
+    handleHttpError(res,"HTTP_ERROR_SEND_NOTIFICATION", 500)
+  }
+}
+
+module.exports = { registerUser, login, createToken, sendNotification };
