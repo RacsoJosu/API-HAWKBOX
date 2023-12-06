@@ -5,6 +5,6 @@ const { createToken, sendNotification } = require("../controllers/usuarios.js")
 
 
 router.post("/crearToken/:idUsuario/:tokenPush", createToken)
-router.post("/enviarNotificacion/:idUsuario/:message", sendNotification )
+router.post("/enviarNotificacion", sendNotification )
 
 module.exports= router

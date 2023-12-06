@@ -137,9 +137,9 @@ const createToken = async (req, res)=>{
 
 const sendNotification = async(req, res)=>{
   try {
-    const idUsuario  = parseInt(req.params.idUsuario);
-    const message = req.params.message
-    if (!idUsuario || !message) {
+    const {body} = req
+    const idUsuario  = body.idUsuario;
+    if (!idUsuario || !body.message) {
       handleHttpError(res, "NEED_ID_USUARIO_AND_MESSAGE", 400)
       return
     }
@@ -151,12 +151,13 @@ const sendNotification = async(req, res)=>{
         handleHttpError(res,"NOT_FOUND_TOKEN_USER",404)
         return
     }
+    console.log({body})
 
     const notification = {
       to: pushToken,
       sound: "default",
-      title:"notificacion",
-      body: message
+      title:body.title,
+      body: body.message
     }
 
     let receipt = await expo.sendPushNotificationsAsync([notification])
