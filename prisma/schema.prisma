@@ -8,21 +8,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model casilleros {
-  idCasillero  String   @id @unique(map: "idCasillero") @db.VarChar(10)
-  Pais         String   @db.VarChar(50)
-  Estado       String   @db.VarChar(50)
-  Ciudad       String   @db.VarChar(50)
-  Telefono     String   @db.VarChar(50)
-  codigoPostal String   @db.VarChar(50)
-  idUsuario    Int
-  createdAt    DateTime @db.DateTime(0)
-  updatedAt    DateTime @db.DateTime(0)
-  usuario      usuarios @relation(fields: [idUsuario], references: [idUsuario])
-
-  @@index([idUsuario], map: "idUsuario")
-}
-
 model cobros_envios {
   idCobro   Int       @id @default(autoincrement())
   peso      Float?    @db.Float
@@ -38,62 +23,38 @@ model paquetes {
   descripcion    String?            @db.VarChar(255)
   peso           Float?             @db.Float
   estado         paquetes_estado?   @default(en_camino)
-  fechaEnvio     DateTime?          @default(now()) @db.DateTime(0)
-  fechaRecibido  DateTime?          @default(now()) @db.DateTime(0)
-  fechaEntregado DateTime?          @default(now()) @db.DateTime(0)
-  createdAt      DateTime?          @default(now()) @db.DateTime(0)
-  updatedAt      DateTime?          @default(now()) @db.DateTime(0)
   imageUrl       String             @db.Text
   idUsuario      Int
   paquetePadreId Int?
   idEmpresa      Int
-  idUbicacion    Int
-  ubicacion      ubicaciones        @relation(fields: [idUbicacion], references: [idUbicacion])
   empresa        empresas_de_envios @relation(fields: [idEmpresa], references: [idEmpresa])
   usuario        usuarios           @relation(fields: [idUsuario], references: [idUsuario])
   notificaciones notificaciones[]
+  transitos      transitos[]
 
-  @@index([idUbicacion], map: "idUbicación")
   @@index([idEmpresa], map: "idEmpresa")
   @@index([idUsuario], map: "idUsuario")
   @@index([paquetePadreId], map: "paquetePadreId")
 }
 
 model transitos {
-  idTransito     Int       @id @default(autoincrement())
-  fechaEnvio     DateTime? @db.DateTime(0)
-  fechaRecibido  DateTime? @db.DateTime(0)
-  fechaEntregado DateTime? @db.DateTime(0)
-  Observaciones  String?   @db.VarChar(100)
-  createdAt      DateTime  @db.DateTime(0)
-  updatedAt      DateTime  @db.DateTime(0)
-}
+  idTransito  Int                  @id @default(autoincrement())
+  fecha       DateTime?            @default(now()) @db.DateTime(0)
+  idPaquete   Int
+  idUbicacion Int
+  tipoestado  transitos_ubicacion? @default(actual)
+  ubicacion   ubicaciones          @relation(fields: [idUbicacion], references: [idUbicacion])
+  paquete     paquetes             @relation(fields: [idPaquete], references: [idPaquete])
 
-model ubicacion_clientes {
-  idUbicacionCliente Int      @id @default(autoincrement())
-  Departamento       String?  @db.VarChar(255)
-  Ciudad             String?  @db.VarChar(255)
-  Telefono           String?  @db.VarChar(255)
-  Direccion          String?  @db.VarChar(255)
-  idUsuario          Int
-  createdAt          DateTime @db.DateTime(0)
-  updatedAt          DateTime @db.DateTime(0)
-  usuario            usuarios @relation(fields: [idUsuario], references: [idUsuario])
-
-  @@index([idUsuario], map: "idUsuario")
+  @@index([idUbicacion], map: "idUbicación")
+  @@index([idPaquete], map: "idPaquete")
 }
 
 model ubicaciones {
-  idUbicacion  Int        @id @default(autoincrement())
-  Departamento String?    @db.VarChar(255)
-  Ciudad       String?    @db.VarChar(255)
-  fechaHora    DateTime?  @db.DateTime(0)
-  idPaquete    Int?
-  createdAt    DateTime?  @db.DateTime(0)
-  updatedAt    DateTime?  @db.DateTime(0)
-  paquetes     paquetes[]
-
-  @@index([idPaquete], map: "idPaquete")
+  idUbicacion  Int         @id @default(autoincrement())
+  Departamento String?     @db.VarChar(255)
+  Ciudad       String?     @db.VarChar(255)
+  transitos    transitos[]
 }
 
 model usuarios {
@@ -110,10 +71,8 @@ model usuarios {
   createdAt      DateTime?      @db.DateTime(0)
   updatedAt      DateTime?      @db.DateTime(0)
 
-  paquetes           paquetes[]
-  casilleros         casilleros[]
-  ubicacion_clientes ubicacion_clientes[]
-  notificaciones     notificaciones[]
+  paquetes       paquetes[]
+  notificaciones notificaciones[]
 }
 
 model empresas_de_envios {
@@ -137,13 +96,18 @@ model notificaciones {
 }
 
 enum paquetes_estado {
-  en_camino  @map("en camino")
-  en_espera  @map("en espera")
-  entregado
-  confirmado
+  en_camino @map("En camino")
+  entregado @map("Entregado")
+  creado    @map("Creado")
 }
 
 enum usuarios_tipo {
   admin
   user
+}
+
+
+enum transitos_ubicacion {
+  actual   @map("Actual")
+  anterior @map("Anterior")
 }
