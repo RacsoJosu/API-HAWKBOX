@@ -3,6 +3,7 @@ const { tokenSign } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
 const {expo} = require("../config/notificationes"); 
 const { getUserDeviceidById } = require("../repository/repository.usuarios");
+const {prisma} = require("../config/database");
 
 
 /**

@@ -19,21 +19,28 @@ const createPackage = async (req, res) => {
     try {
         const { body, file } = req
         const imageUrl = `http://localhost:3000/images/${file.filename}`
-        const fechaEnvio = new Date()
-        const trackinNumber = generateTrackinNumber()
+        
+
+        const trakingNumber = `${Date.now()}`;
+        const peso = parseFloat(body.weigth)
 
         
         const package = await prisma.paquetes.create({
             data: {
-                peso: body.weight,
+                peso,
                 estado: body.state,
                 descripcion: body.description,
-                fechaEnvio,
-                trackinNumber,
+                trakingNumber,
                 imageUrl,
                 usuario: {
                     connect: {
-                        idUsuario: req.headers.idUser
+                        idUsuario: parseInt( req.headers.idUser),
+                    }
+                },
+                empresa:{
+                    connect:{
+
+                        idEmpresa: parseInt(body.idEmpresa),
                     }
                 }
             }
