@@ -16,8 +16,8 @@ const getPackages = async (req, res) => {
 
 const createPackage = async (req, res) => {
     try {
-        const { body, file } = req
-        const imageUrl = `http://localhost:5000/images/${file.filename}`
+        const { body} = req
+        const imageUrl = `http://localhost:5000/images/-`
         
 
         const trakingNumber = `${Date.now()}`;
@@ -45,7 +45,7 @@ const createPackage = async (req, res) => {
             }
         })
 
-        res.json({ newPackage: package.idPaquete })
+        res.json({ newPackage: package.idPaquete, msj:"paquete creado" })
 
     } catch (error) {
         console.log({ error })
