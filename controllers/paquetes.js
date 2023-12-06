@@ -17,7 +17,7 @@ const getPackages = async (req, res) => {
 const createPackage = async (req, res) => {
     try {
         const { body, file } = req
-        const imageUrl = `${process.env.API_URL}/images/${file.filename}`
+        const imageUrl = `http://localhost:5000/images/${file.filename}`
         
 
         const trakingNumber = `${Date.now()}`;
