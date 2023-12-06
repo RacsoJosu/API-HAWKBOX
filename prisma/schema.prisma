@@ -33,23 +33,28 @@ model cobros_envios {
 }
 
 model paquetes {
-  idPaquete      Int              @id @default(autoincrement())
-  trakingNumber  Int 
-  descripcion    String?          @db.VarChar(255)
-  peso           Float?           @db.Float
-  estado         paquetes_estado?
-  fechaEnvio     DateTime?        @default(now()) @db.DateTime(0)
-  fechaRecibido  DateTime?        @default(now()) @db.DateTime(0)
-  fechaEntregado DateTime?        @default(now()) @db.DateTime(0)
-  createdAt      DateTime?        @default(now()) @db.DateTime(0)
-  updatedAt      DateTime?        @default(now()) @db.DateTime(0)
-  imageUrl       String           @db.VarChar(255)
+  idPaquete      Int                @id @default(autoincrement())
+  trakingNumber  Int
+  descripcion    String?            @db.VarChar(255)
+  peso           Float?             @db.Float
+  estado         paquetes_estado?   @default(en_camino)
+  fechaEnvio     DateTime?          @default(now()) @db.DateTime(0)
+  fechaRecibido  DateTime?          @default(now()) @db.DateTime(0)
+  fechaEntregado DateTime?          @default(now()) @db.DateTime(0)
+  createdAt      DateTime?          @default(now()) @db.DateTime(0)
+  updatedAt      DateTime?          @default(now()) @db.DateTime(0)
+  imageUrl       String             @db.Text
   idUsuario      Int
   paquetePadreId Int?
-
-  usuario        usuarios         @relation(fields: [idUsuario], references: [idUsuario])
+  idEmpresa      Int
+  idUbicacion    Int
+  ubicacion      ubicaciones        @relation(fields: [idUbicacion], references: [idUbicacion])
+  empresa        empresas_de_envios @relation(fields: [idEmpresa], references: [idEmpresa])
+  usuario        usuarios           @relation(fields: [idUsuario], references: [idUsuario])
   notificaciones notificaciones[]
 
+  @@index([idUbicacion], map: "idUbicación")
+  @@index([idEmpresa], map: "idEmpresa")
   @@index([idUsuario], map: "idUsuario")
   @@index([paquetePadreId], map: "paquetePadreId")
 }
@@ -79,30 +84,31 @@ model ubicacion_clientes {
 }
 
 model ubicaciones {
-  idUbicacion Int       @id @default(autoincrement())
-  Departamento String?  @db.VarChar(255)
-  Ciudad      String?  @db.VarChar(255)
-  fechaHora   DateTime? @db.DateTime(0)
-  idPaquete   Int?
-  createdAt   DateTime? @db.DateTime(0)
-  updatedAt   DateTime? @db.DateTime(0)
+  idUbicacion  Int        @id @default(autoincrement())
+  Departamento String?    @db.VarChar(255)
+  Ciudad       String?    @db.VarChar(255)
+  fechaHora    DateTime?  @db.DateTime(0)
+  idPaquete    Int?
+  createdAt    DateTime?  @db.DateTime(0)
+  updatedAt    DateTime?  @db.DateTime(0)
+  paquetes     paquetes[]
 
   @@index([idPaquete], map: "idPaquete")
 }
 
 model usuarios {
-  idUsuario      Int           @id @default(autoincrement())
-  nombre         String        @db.VarChar(255)
-  correo         String        @unique(map: "correo_unique") @db.VarChar(255)
-  contrasenia    String?       @db.VarChar(255)
+  idUsuario      Int            @id @default(autoincrement())
+  nombre         String         @db.VarChar(255)
+  correo         String         @unique(map: "correo_unique") @db.VarChar(255)
+  contrasenia    String?        @db.VarChar(255)
   tipo           usuarios_tipo?
-  numeroTelefono String?       @db.VarChar(100)
-  pais           String?       @db.VarChar(255)
-  ciudad         String        @db.VarChar(255)
-  deviceid       String        @db.VarChar(255)
-  imagenUrl      String        @db.VarChar(255)
-  createdAt      DateTime?     @db.DateTime(0)
-  updatedAt      DateTime?     @db.DateTime(0)
+  numeroTelefono String?        @db.VarChar(100)
+  pais           String?        @db.VarChar(255)
+  ciudad         String         @db.VarChar(255)
+  deviceid       String         @db.VarChar(255)
+  imagenUrl      String         @db.VarChar(255)
+  createdAt      DateTime?      @db.DateTime(0)
+  updatedAt      DateTime?      @db.DateTime(0)
 
   paquetes           paquetes[]
   casilleros         casilleros[]
@@ -111,8 +117,9 @@ model usuarios {
 }
 
 model empresas_de_envios {
-  idEmpresa Int     @id @default(autoincrement())
-  nombre    String? @db.VarChar(100)
+  idEmpresa Int        @id @default(autoincrement())
+  nombre    String?    @db.VarChar(100)
+  paquetes  paquetes[]
 }
 
 model notificaciones {
