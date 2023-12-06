@@ -151,7 +151,7 @@ const sendNotification = async(req, res)=>{
         handleHttpError(res,"NOT_FOUND_TOKEN_USER",404)
         return
     }
-    console.log({body})
+    
 
     const notification = {
       to: pushToken,
@@ -163,17 +163,32 @@ const sendNotification = async(req, res)=>{
     let receipt = await expo.sendPushNotificationsAsync([notification])
 
     if (receipt[0].status==="ok") {
+      await prisma.notificaciones.create({
+        data:{
+          titulo: body.title,                   
+          descripcion: body.description,              
+          tipoEstado: body.tipoEstado,     
+          idUsuario: idUsuario,      
+          idPaquete: body.idPaquete,      
+        }
+      })
       res.json({success: true, receipt})
+      return
       
     }else{
       res.status(500).json({error:"Error al enviar la notificación", receipt})
+      return
     }
 
-
-    res.json({user})
   } catch (error) {
-    console.log({error})
-    handleHttpError(res,"HTTP_ERROR_SEND_NOTIFICATION", 500)
+    if (error.statusCode=== 401) {
+      handleHttpError(res, "El token received es invalido", error.statusCode)
+      return
+    }else{
+
+      handleHttpError(res,"HTTP_ERROR_SEND_NOTIFICATION", 500)
+      return
+    }
   }
 }
 
