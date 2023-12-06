@@ -1,7 +1,6 @@
 const { prisma } = require('../config/database');
 const { findAllPackages } = require('../repository/paquetes');
 const { handleHttpError } = require('../utils/handleError');
-const { generateTrackinNumber } = require('../utils/handleTrackingNumber');
 
 
 const getPackages = async (req, res) => {
@@ -18,7 +17,7 @@ const getPackages = async (req, res) => {
 const createPackage = async (req, res) => {
     try {
         const { body, file } = req
-        const imageUrl = `http://localhost:3000/images/${file.filename}`
+        const imageUrl = `${process.env.API_URL}/images/${file.filename}`
         
 
         const trakingNumber = `${Date.now()}`;
